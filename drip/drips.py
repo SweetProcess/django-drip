@@ -64,7 +64,9 @@ class DripMessage(object):
     @property
     def subject(self):
         if not self._subject:
-            self._subject = Template(self.drip_base.subject_template).render(self.context)
+            self._subject = Template(
+                self.drip_base.subject_template or ''
+            ).render(self.context)
         return self._subject
 
     @property
