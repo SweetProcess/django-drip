@@ -76,7 +76,9 @@ class DripMessage(object):
     @property
     def body(self):
         if not self._body:
-            self._body = Template(self.drip_base.body_template).render(self.context)
+            self._body = Template(
+                self.drip_base.drip.body_template or ''
+            ).render(self.context)
         return self._body
 
     @property

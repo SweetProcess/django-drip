@@ -123,6 +123,14 @@ class DripsTestCase(TestCase):
     ### TEST DRIPS ###
     ##################
 
+    def test_no_subject_template_drip(self):
+        d = Drip.objects.create(
+            name='A while ago',
+            body_html_template='grate! fanx'
+        )
+        message = DripMessage(d, self.User.objects.first())
+        self.assertEqual(message.message.subject, '')
+
     def test_backwards_drip_class(self):
         Drip.objects.create(
             name='A Custom Week Ago',
