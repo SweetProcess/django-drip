@@ -129,7 +129,7 @@ class DripsTestCase(TestCase):
             body_html_template='grate! fanx'
         )
         message = DripMessage(d, self.User.objects.first())
-        self.assertEqual(message.message.subject, '')
+        self.assertEqual(message.subject, '')
 
     def test_backwards_drip_class(self):
         Drip.objects.create(
