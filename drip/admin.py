@@ -28,6 +28,7 @@ class DripAdmin(admin.ModelAdmin):
         QuerySetRuleInline,
     ]
     form = DripForm
+    save_as = True
 
     av = lambda self, view: self.admin_site.admin_view(view)
     def timeline(self, request, drip_id, into_past, into_future):
