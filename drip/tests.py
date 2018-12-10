@@ -486,6 +486,51 @@ class DripsTestCase(TestCase):
             date_joined__gte=timezone.now() - timedelta(days=1)
         ).count())
 
+    # test duplicate in admin
+    def test_save_as_admin_functionality(self):
+
+        model = Drip.objects.create(
+            name='A Custom Week Ago',
+            subject_template='HELLO {{ user.username }}',
+            body_html_template='KETTEHS ROCK!'
+        )
+
+        qsr = QuerySetRule.objects.create(
+            drip=model,
+            field_name='profile__user__groups__count',
+            lookup_type='exact',
+            field_value='0'
+        )
+
+        superuser = User.objects.create_superuser(
+            username='super', password='secret', email='super@example.com'
+        )
+        data = {
+            '_saveasnew': 'Save+as+new',
+            'body_html_template': model.body_html_template,
+            'name': model.name,
+            'message_class': 'default',
+            'queryset_rules-INITIAL_FORMS': 1,
+            'queryset_rules-TOTAL_FORMS': 1,
+            'queryset_rules-0-drip': model.id,
+            'queryset_rules-0-id': qsr.id,
+            'queryset_rules-0-lookup_type': qsr.lookup_type,
+            'queryset_rules-0-field_value': qsr.field_value,
+            'queryset_rules-0-field_name': qsr.field_name,
+            'queryset_rules-0-method_type': 'filter',
+        }
+        self.client.force_login(superuser)
+        self.client.post(
+            reverse('admin:drip_drip_change', args=(model.pk,)), data
+        )
+
+        newest = Drip.objects.latest('lastchanged')
+        self.assertNotEqual(newest.id, model.id)
+        self.assertNotEqual(
+            newest.queryset_rules.first().id,
+            model.queryset_rules.first().id,
+        )
+
 
 # Used by CustomMessagesTest
 class PlainDripEmail(DripMessage):
