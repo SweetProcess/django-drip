@@ -508,7 +508,7 @@ class DripsTestCase(TestCase):
         data = {
             '_saveasnew': 'Save+as+new',
             'body_html_template': model.body_html_template,
-            'name': model.name,
+            'name': model.name + '1',
             'message_class': 'default',
             'queryset_rules-INITIAL_FORMS': 1,
             'queryset_rules-TOTAL_FORMS': 1,
@@ -520,9 +520,10 @@ class DripsTestCase(TestCase):
             'queryset_rules-0-method_type': 'filter',
         }
         self.client.force_login(superuser)
-        self.client.post(
+        response = self.client.post(
             reverse('admin:drip_drip_change', args=(model.pk,)), data
         )
+        self.assertEqual(response.status_code, 302)
 
         newest = Drip.objects.latest('lastchanged')
         self.assertNotEqual(newest.id, model.id)
