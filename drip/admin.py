@@ -1,9 +1,8 @@
-import base64
 import json
 
 from django import forms
 from django.contrib import admin
-from django.conf.urls import url
+from django.urls import re_path
 
 from drip.models import Drip, SentDrip, QuerySetRule
 from drip.drips import configured_message_classes, message_class_for
@@ -22,6 +21,7 @@ class DripForm(forms.ModelForm):
         model = Drip
         exclude = []
 
+@admin.register(Drip)
 class DripAdmin(admin.ModelAdmin):
     list_display = ('name', 'enabled', 'message_class')
     inlines = [
@@ -90,22 +90,21 @@ class DripAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super(DripAdmin, self).get_urls()
         my_urls = [
-            url(
+            re_path(
                 r'^(?P<drip_id>[\d]+)/timeline/(?P<into_past>[\d]+)/(?P<into_future>[\d]+)/$',
                 self.av(self.timeline),
                 name='drip_timeline'
             ),
-            url(
+            re_path(
                 r'^(?P<drip_id>[\d]+)/timeline/(?P<into_past>[\d]+)/(?P<into_future>[\d]+)/(?P<user_id>[\d]+)/$',
                 self.av(self.view_drip_email),
                 name='view_drip_email'
             )
         ]
         return my_urls + urls
-admin.site.register(Drip, DripAdmin)
 
 
+@admin.register(SentDrip)
 class SentDripAdmin(admin.ModelAdmin):
     list_display = [f.name for f in SentDrip._meta.fields]
     ordering = ['-id']
-admin.site.register(SentDrip, SentDripAdmin)
