@@ -4,6 +4,8 @@ SECRET_KEY = "dripdripdripdripdripdripdrip"
 DRIP_FROM_EMAIL = ""
 DEBUG = True
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 SECRET_KEY = "whatever/you/want-goes-here"
 
 SECRET_KEY = "whatever"
@@ -53,6 +55,8 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ]
