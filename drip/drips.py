@@ -1,10 +1,7 @@
 import operator
 import functools
 
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
+from importlib import import_module
 
 from django.conf import settings
 from django.db.models import Q
@@ -36,7 +33,7 @@ def message_class_for(name):
     return klass
 
 
-class DripMessage(object):
+class DripMessage:
     def __init__(self, drip_base, user):
         self.drip_base = drip_base
         self.user = user

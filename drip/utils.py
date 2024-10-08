@@ -1,24 +1,10 @@
-import sys
-
 from django.db import models
 from django.db.models import ForeignKey, OneToOneField, ManyToManyField
 
-try:
-    from django.db.models.fields.related import ManyToOneRel
-except ImportError:
-    from django.db.models.related import RelatedObject as ManyToOneRel
+from django.db.models.fields.related import ManyToOneRel
 
-# taking a nod from python-requests and skipping six
-_ver = sys.version_info
-is_py2 = _ver[0] == 2
-is_py3 = _ver[0] == 3
-
-if is_py2:
-    basestring = basestring
-    unicode = unicode
-elif is_py3:
-    basestring = (str, bytes)
-    unicode = str
+basestring = (str, bytes)
+unicode = str
 
 
 def get_fields(
