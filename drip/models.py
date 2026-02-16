@@ -177,6 +177,11 @@ class QuerySetRule(models.Model):
                 hour=0, minute=0, second=0, microsecond=0
             ) + self.parse_duration(field_value)
 
+            if self.lookup_type == "contains":
+                field_value = field_value.date()
+
+            field_value = f"{field_value}"
+
         # F expressions
         if self.field_value.startswith("F_"):
             field_value = self.field_value.replace("F_", "")
