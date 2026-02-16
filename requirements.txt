@@ -1,5 +1,3 @@
 # production
 Django>=4.0
 
-# development
-Sphinx==1.1.3
