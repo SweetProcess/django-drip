@@ -221,6 +221,20 @@ class DripsTestCase(TestCase):
         )
         return model_drip
 
+    def build_contains_date_drip(self, shift_one=7, when="now"):
+        model_drip = Drip.objects.create(
+            name="A Custom Week Ago",
+            subject_template="HELLO {{ user.username }}",
+            body_html_template="KETTEHS ROCK!",
+        )
+        QuerySetRule.objects.create(
+            drip=model_drip,
+            field_name="date_joined",
+            lookup_type="contains",
+            field_value="{0}-{1} days".format(when, shift_one),
+        )
+        return model_drip
+
     def test_custom_drip(self):
         """
         Test a simple
@@ -249,6 +263,33 @@ class DripsTestCase(TestCase):
         self.assertEqual(2, drip.get_queryset().count())  # 2 people meet the criteria
         drip.prune()
         self.assertEqual(0, drip.get_queryset().count())  # everyone is pruned
+
+    def test_today_drip_contains(self):
+        model_drip = self.build_contains_date_drip(when="today")
+        drip = model_drip.drip
+
+        # ensure we are starting from a blank slate
+        self.assertEqual(2, drip.get_queryset().count())  # 2 people meet the criteria
+        drip.prune()
+        self.assertEqual(
+            2, drip.get_queryset().count()
+        )  # no one is pruned, never sent before
+        self.assertEqual(0, SentDrip.objects.count())  # confirm nothing sent before
+
+        # send the drip
+        drip.send()
+        self.assertEqual(2, SentDrip.objects.count())  # got sent
+
+        for sent in SentDrip.objects.all():
+            self.assertIn("HELLO", sent.subject)
+            self.assertIn("KETTEHS ROCK", sent.body)
+
+        # subsequent runs reflect previous activity
+        drip = Drip.objects.get(id=model_drip.id).drip
+        self.assertEqual(2, drip.get_queryset().count())  # 2 people meet the criteria
+        drip.prune()
+        self.assertEqual(0, drip.get_queryset().count())  # everyone is pruned
+
 
     def test_today_drip(self):
         model_drip = self.build_joined_date_drip(when="today")
