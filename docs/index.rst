@@ -137,8 +137,9 @@ the ``DRIP_MESSAGE_CLASSES`` setting. For example:
 
 This setting will allow for choosing in the admin, for each drip, whether the "default" (``drip.drips.Dripmessage``)
 or "plain" message class should be used for generating and sending the messages to users that meet the drip criteria.
-Note there is an "default" key mapped to the default ``DripMessage`` class that is added to the settings-configured
-``DRIP_MESSAGE_CLASSES`` dictionary if that value does not have a "default" key. If you wish to use a custom class for
+Note that a ``default`` key mapped to the default ``DripMessage`` class is added to the mapping returned by
+``configured_message_classes()`` if no "default" key is configured. The ``DRIP_MESSAGE_CLASSES`` settings dictionary
+is left unchanged. If you wish to use a custom class for
 all drips, simply specify that custom class as the "default" key value in the settings, for example:
 
 .. code-block:: python
