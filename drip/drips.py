@@ -1,21 +1,17 @@
-import operator
 import functools
-
+import logging
+import operator
 from importlib import import_module
 
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
 from django.template import Context, Template
-from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
+from django.utils.timezone import now as conditional_now
 
 from drip.models import SentDrip
 from drip.utils import get_user_model
-
-from django.utils.timezone import now as conditional_now
-
-
-import logging
 
 
 def configured_message_classes():
