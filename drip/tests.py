@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.test.client import RequestFactory
 from django.core.exceptions import ValidationError
 from django.urls import resolve, reverse
@@ -10,10 +10,53 @@ from django.conf import settings
 from django.utils import timezone
 
 from drip.models import Drip, SentDrip, QuerySetRule
-from drip.drips import DripBase, DripMessage
+from drip.drips import DripBase, DripMessage, configured_message_classes
 from drip.utils import get_user_model, unicode
 
 from credits.models import Profile, Account
+
+
+class ConfiguredMessageClassesTests(SimpleTestCase):
+    def test_fallback_does_not_mutate_configuration(self):
+        configured = {"plain": "drip.tests.PlainDripEmail"}
+        with self.settings(DRIP_MESSAGE_CLASSES=configured):
+            result = configured_message_classes()
+
+            self.assertEqual(configured, {"plain": "drip.tests.PlainDripEmail"})
+            self.assertEqual(
+                result,
+                {
+                    "plain": "drip.tests.PlainDripEmail",
+                    "default": "drip.drips.DripMessage",
+                },
+            )
+
+    def test_explicit_default_is_preserved(self):
+        with self.settings(
+            DRIP_MESSAGE_CLASSES={"default": "drip.tests.PlainDripEmail"}
+        ):
+            self.assertEqual(
+                configured_message_classes()["default"], "drip.tests.PlainDripEmail"
+            )
+
+    def test_returned_mapping_is_independent(self):
+        configured = {"default": "drip.tests.PlainDripEmail"}
+        with self.settings(DRIP_MESSAGE_CLASSES=configured):
+            result = configured_message_classes()
+            result["default"] = "drip.drips.DripMessage"
+            result["extra"] = "drip.drips.DripMessage"
+
+            self.assertEqual(configured, {"default": "drip.tests.PlainDripEmail"})
+            self.assertEqual(configured_message_classes(), configured)
+
+    def test_missing_setting_uses_fallback_without_creating_setting(self):
+        with self.settings(DRIP_MESSAGE_CLASSES={}):
+            del settings.DRIP_MESSAGE_CLASSES
+
+            self.assertEqual(
+                configured_message_classes(), {"default": "drip.drips.DripMessage"}
+            )
+            self.assertFalse(hasattr(settings, "DRIP_MESSAGE_CLASSES"))
 
 
 class RulesTestCase(TestCase):

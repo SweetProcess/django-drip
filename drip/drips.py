@@ -19,7 +19,7 @@ import logging
 
 
 def configured_message_classes():
-    conf_dict = getattr(settings, "DRIP_MESSAGE_CLASSES", {})
+    conf_dict = dict(getattr(settings, "DRIP_MESSAGE_CLASSES", {}))
     if "default" not in conf_dict:
         conf_dict["default"] = "drip.drips.DripMessage"
     return conf_dict
