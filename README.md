@@ -61,12 +61,27 @@ cd django-drip
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+python -m pip install --group dev
 python -Wa manage.py test --noinput
 ```
 
 To match SweetProcess's Python 3.13 / Django 5.1 deployment, create the virtual
 environment with Python 3.13 and install with
 `python -m pip install -r requirements.txt "Django~=5.1.0"`.
+
+Check code formatting and import order with:
+
+```bash
+ruff format --check .
+ruff check .
+```
+
+Apply the same fixes locally with:
+
+```bash
+ruff format .
+ruff check --fix .
+```
 
 Build the wheel and source distribution with:
 

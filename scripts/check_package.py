@@ -10,7 +10,6 @@ from django.core.management import call_command, get_commands, load_command_clas
 
 import drip
 
-
 package = distribution("django-drip")
 assert package.version == drip.__version__
 assert package.metadata["Requires-Python"] == ">=3.12"

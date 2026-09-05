@@ -4,8 +4,8 @@ from django import forms
 from django.contrib import admin
 from django.urls import re_path
 
-from drip.models import Drip, SentDrip, QuerySetRule
 from drip.drips import configured_message_classes, message_class_for
+from drip.models import Drip, QuerySetRule, SentDrip
 from drip.utils import get_user_model
 
 
@@ -34,13 +34,14 @@ class DripAdmin(admin.ModelAdmin):
     form = DripForm
     save_as = True
 
-    av = lambda self, view: self.admin_site.admin_view(view)
+    def av(self, view):
+        return self.admin_site.admin_view(view)
 
     def timeline(self, request, drip_id, into_past, into_future):
         """
         Return a list of people who should get emails.
         """
-        from django.shortcuts import render, get_object_or_404
+        from django.shortcuts import get_object_or_404, render
 
         drip = get_object_or_404(Drip, id=drip_id)
 
@@ -61,8 +62,8 @@ class DripAdmin(admin.ModelAdmin):
         return render(request, "drip/timeline.html", locals())
 
     def view_drip_email(self, request, drip_id, into_past, into_future, user_id):
-        from django.shortcuts import render, get_object_or_404
         from django.http import HttpResponse
+        from django.shortcuts import get_object_or_404
 
         drip = get_object_or_404(Drip, id=drip_id)
         User = get_user_model()

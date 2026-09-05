@@ -36,6 +36,23 @@ Repository = "https://github.com/SweetProcess/django-drip"
 Issues = "https://github.com/SweetProcess/django-drip/issues"
 Documentation = "https://github.com/SweetProcess/django-drip/blob/master/docs/index.rst"
 
+[dependency-groups]
+dev = ["ruff==0.14.14"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+"drip/south_migrations/*.py" = ["F401", "F811"]
+"scripts/check_package.py" = ["E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["credits", "drip"]
+
 [tool.setuptools]
 include-package-data = false
 

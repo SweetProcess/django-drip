@@ -1,19 +1,18 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.core import mail
+from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase, TestCase
 from django.test.client import RequestFactory
-from django.core.exceptions import ValidationError
 from django.urls import resolve, reverse
-from django.core import mail
-from django.conf import settings
 from django.utils import timezone
 
-from drip.models import Drip, SentDrip, QuerySetRule
+from credits.models import Account, Profile
 from drip.drips import DripBase, DripMessage, configured_message_classes
+from drip.models import Drip, QuerySetRule, SentDrip
 from drip.utils import get_user_model, unicode
-
-from credits.models import Profile, Account
 
 
 class ConfiguredMessageClassesTests(SimpleTestCase):
@@ -332,7 +331,6 @@ class DripsTestCase(TestCase):
         self.assertEqual(2, drip.get_queryset().count())  # 2 people meet the criteria
         drip.prune()
         self.assertEqual(0, drip.get_queryset().count())  # everyone is pruned
-
 
     def test_today_drip(self):
         model_drip = self.build_joined_date_drip(when="today")

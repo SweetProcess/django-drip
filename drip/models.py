@@ -1,8 +1,8 @@
-from django.db import models
-from django.core.exceptions import ValidationError
 from django.conf import settings
-from django.utils.dateparse import parse_duration
+from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils import timezone
+from django.utils.dateparse import parse_duration
 
 from drip.utils import get_user_model
 
@@ -154,7 +154,7 @@ class QuerySetRule(models.Model):
         value = value.lstrip("+")
         duration = parse_duration(value)
         if duration is None:
-            if not "," in value:
+            if "," not in value:
                 # django parse_duration requires 'x days, S'
                 duration = parse_duration(value + ", 0")
                 if duration is None:

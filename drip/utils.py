@@ -1,6 +1,5 @@
 from django.db import models
-from django.db.models import ForeignKey, OneToOneField, ManyToManyField
-
+from django.db.models import ForeignKey, ManyToManyField, OneToOneField
 from django.db.models.fields.related import ManyToOneRel
 
 basestring = (str, bytes)
