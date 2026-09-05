@@ -154,7 +154,7 @@ class QuerySetRule(models.Model):
         value = value.lstrip("+")
         duration = parse_duration(value)
         if duration is None:
-            if not "," in value:
+            if "," not in value:
                 # django parse_duration requires 'x days, S'
                 duration = parse_duration(value + ", 0")
                 if duration is None:

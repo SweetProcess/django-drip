@@ -34,7 +34,8 @@ class DripAdmin(admin.ModelAdmin):
     form = DripForm
     save_as = True
 
-    av = lambda self, view: self.admin_site.admin_view(view)
+    def av(self, view):
+        return self.admin_site.admin_view(view)
 
     def timeline(self, request, drip_id, into_past, into_future):
         """
@@ -62,7 +63,7 @@ class DripAdmin(admin.ModelAdmin):
 
     def view_drip_email(self, request, drip_id, into_past, into_future, user_id):
         from django.http import HttpResponse
-        from django.shortcuts import get_object_or_404, render
+        from django.shortcuts import get_object_or_404
 
         drip = get_object_or_404(Drip, id=drip_id)
         User = get_user_model()
